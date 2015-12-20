@@ -1,0 +1,25 @@
+{
+  "name": "graphql-study",
+  "version": "0.1.0",
+  "description": "a graphql server demo",
+  "main": "index.js",
+  "scripts": {
+    "start": "supervisor -i node_modules -- --use_strict --harmony_destructuring index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.coding.net/leeching/graphql-demo.git"
+  },
+  "author": "leeching <417300981@qq.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3",
+    "express-graphql": "^0.4.5",
+    "graphql": "^0.4.14"
+  },
+  "devDependencies": {
+    "babel": "^6.3.13",
+    "babel-preset-es2015": "^6.3.13",
+    "supervisor": "^0.9.1"
+  }
+}
