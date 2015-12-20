@@ -4,7 +4,8 @@
   "description": "a graphql server demo",
   "main": "index.js",
   "scripts": {
-    "start": "supervisor -i node_modules -- --use_strict --harmony_destructuring index",
+    "build": "webpack --watch",
+    "start": "supervisor -i node_modules,build -- --use_strict --harmony_destructuring index",
     "test": "_mocha --harmony_destructuring --use_strict test"
   },
   "repository": {
@@ -19,12 +20,21 @@
     "koa": "^1.1.2",
     "koa-graphql": "^0.4.4",
     "koa-mount": "^1.3.0",
+    "koa-route": "^2.4.2",
+    "koa-send": "^3.1.0",
+    "koa-static": "^1.5.2",
     "mongodb": "^2.0.52"
   },
   "devDependencies": {
     "babel": "^6.3.13",
+    "babel-loader": "^6.2.0",
     "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
     "mocha": "^2.3.4",
-    "supervisor": "^0.9.1"
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "supervisor": "^0.9.1",
+    "webpack": "^1.12.9"
   }
 }
