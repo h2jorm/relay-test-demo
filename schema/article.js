@@ -6,6 +6,7 @@ const {
   GraphQLList,
   GraphQLNonNull
 } = require('graphql')
+const {mutationWithClientMutationId} = require('graphql-relay')
 const Collection = require('../lib/collection')
 
 const ArticleType = new GraphQLObjectType({
@@ -16,6 +17,14 @@ const ArticleType = new GraphQLObjectType({
     title: {type: GraphQLString},
     content: {type: GraphQLString},
   }
+})
+
+const ArticleListType = new GraphQLObjectType({
+  name: 'ArticleList',
+  description: 'an array of articles',
+  fields: () => ({
+    articles: {type: new GraphQLList(ArticleType)}
+  })
 })
 
 const ArticleInputType = new GraphQLInputObjectType({
@@ -37,9 +46,13 @@ const query = {
 }
 
 const queryAll = {
-  type: new GraphQLList(ArticleType),
+  type: ArticleListType,
   resolve: root =>
-    new Collection('articles').getAll()
+    new Collection('articles').getAll().then(result => {
+      return {
+        articles: result
+      }
+    })
 }
 
 const add = {
@@ -50,6 +63,23 @@ const add = {
   resolve: (root, {article}) =>
     new Collection('articles').add(article)
 }
+
+const AddArticle = mutationWithClientMutationId({
+  name: 'AddArticle',
+  inputFields: {
+    title: {type: GraphQLString},
+    content: {type: GraphQLString},
+  },
+  outputFields: {
+    article: {
+      type: ArticleType,
+      resolve: payload => payload
+    }
+  },
+  mutateAndGetPayload: ({title, content}) => {
+    return new Collection('articles').add({title, content})
+  }
+})
 
 const update = {
   type: ArticleType,
@@ -76,6 +106,7 @@ module.exports = {
     queryAll
   },
   mutation: {
+    addArticle: AddArticle,
     add,
     update,
     remove

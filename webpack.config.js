@@ -22,6 +22,7 @@ module.exports = {
         loader: 'babel',
         exclude: /node_modules/,
         query: {
+          plugins: ['./scripts/babelRelayPlugin'],
           presets: ['react', 'es2015', 'stage-0']
         }
       },

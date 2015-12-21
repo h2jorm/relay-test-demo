@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --watch",
     "start": "supervisor -i node_modules,build -- --use_strict --harmony_destructuring index",
-    "test": "_mocha --harmony_destructuring --use_strict test"
+    "test": "_mocha --harmony_destructuring --use_strict test",
+    "update-schema": "node --use_strict --harmony_destructuring ./scripts/updateSchema"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "graphql": "^0.4.14",
+    "graphql-relay": "^0.3.6",
     "kerberos": "0.0.17",
     "koa": "^1.1.2",
     "koa-graphql": "^0.4.4",
