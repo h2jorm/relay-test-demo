@@ -51,15 +51,6 @@ const queryAll = {
     new Collection('articles').getAll().then(result => ({data: result}))
 }
 
-const add = {
-  type: ArticleType,
-  args: {
-    article: {type: new GraphQLNonNull(ArticleInputType)}
-  },
-  resolve: (root, {article}) =>
-    new Collection('articles').add(article)
-}
-
 const AddArticle = mutationWithClientMutationId({
   name: 'AddArticle',
   inputFields: {
@@ -77,24 +68,33 @@ const AddArticle = mutationWithClientMutationId({
   }
 })
 
-const update = {
-  type: ArticleType,
-  args: {
-    id: {type: new GraphQLNonNull(GraphQLString)},
-    article: {type: new GraphQLNonNull(ArticleInputType)}
+const UpdateArticle = mutationWithClientMutationId({
+  name: 'UpdateArticle',
+  inputFields: {
+    id: {type: GraphQLString},
+    title: {type: GraphQLString},
+    content: {type: GraphQLString},
   },
-  resolve: (root, {id, article}) =>
-    new Collection('articles').update({id}, article)
-}
+  outputFields: {
+    article: {type: ArticleType}
+  },
+  mutationWithClientMutationId: ({id, title, content}) => {
+    return new Collection('articles').update({id}, {title, content})
+  }
+})
 
-const remove = {
-  type: ArticleType,
-  args: {
+const RemoveArticle = mutationWithClientMutationId({
+  name: 'RemoveArticle',
+  inputFields: {
     id: {type: GraphQLString}
   },
-  resolve: (root, {id}) =>
-    new Collection('articles').remove({id})
-}
+  outputFields: {
+    article: {type: ArticleType}
+  },
+  mutateAndGetPayload: ({id}) => {
+    return new Collection('articles').remove({id})
+  }
+})
 
 module.exports = {
   query: {
@@ -103,8 +103,7 @@ module.exports = {
   },
   mutation: {
     addArticle: AddArticle,
-    add,
-    update,
-    remove
+    updateArticle: UpdateArticle,
+    removeArticle: RemoveArticle
   }
 }
