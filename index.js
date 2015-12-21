@@ -19,4 +19,5 @@ app.use(mount('/graphql', graphqlHTTP({
   pretty: true,
   graphiql: true
 })))
+
 app.listen(PORT, () => console.log(`koa is listening on ${PORT}`))
