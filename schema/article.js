@@ -71,10 +71,7 @@ const AddArticle = mutationWithClientMutationId({
     content: {type: GraphQLString},
   },
   outputFields: {
-    article: {
-      type: ArticleType,
-      resolve: payload => payload
-    }
+    article: {type: ArticleType}
   },
   mutateAndGetPayload: ({title, content}) => {
     return new Collection('articles').add({title, content})
