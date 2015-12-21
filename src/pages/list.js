@@ -20,14 +20,14 @@ Article = Relay.createContainer(Article, {
   }
 })
 
-class ArticleList extends React.Component {
+class Archive extends React.Component {
   render() {
     return (
       <div className="page-list">
         <h1>Article List</h1>
         <ul>
-          {this.props.articles.data.map(
-            article => <Article article={article} key={article.id} />
+          {this.props.archive.articles.edges.map(
+            edge => <Article article={edge.node} key={edge.cursor} />
           )}
         </ul>
         <hr />
@@ -64,22 +64,26 @@ class ArticleList extends React.Component {
   }
 }
 
-ArticleList = Relay.createContainer(ArticleList, {
+Archive = Relay.createContainer(Archive, {
   fragments: {
-    articles: () => Relay.QL`
-      fragment on Articles {
-        data {${Article.getFragment('article')}}
+    archive: () => Relay.QL`
+      fragment on Archive {
+        articles(first: 10) {
+          edges {
+            node {${Article.getFragment('article')}}
+          }
+        }
       }
     `
   }
 })
 
-class ArticleListRoute extends Relay.Route {
+class ArchiveRoute extends Relay.Route {
   static routeName = 'Home'
   static queries = {
-    articles: Component => Relay.QL`
+    archive: Component => Relay.QL`
       query {
-        queryAll {${Component.getFragment('articles')}}
+        archive {${Archive.getFragment('archive')}}
       }
     `
   }
@@ -89,8 +93,8 @@ export default class Page extends React.Component {
   render() {
     return (
       <Relay.RootContainer
-        Component={ArticleList}
-        route={new ArticleListRoute()}
+        Component={Archive}
+        route={new ArchiveRoute()}
       />
     )
   }

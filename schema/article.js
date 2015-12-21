@@ -7,54 +7,56 @@ const {
   GraphQLList,
   GraphQLNonNull
 } = require('graphql')
-const {mutationWithClientMutationId} = require('graphql-relay')
+const {
+  connectionArgs,
+  connectionDefinitions,
+  connectionFromArray,
+  connectionFromPromisedArray,
+  nodeDefinitions,
+  fromGlobalId,
+  globalIdField,
+  mutationWithClientMutationId
+} = require('graphql-relay')
 const Collection = require('../lib/collection')
+
+const {nodeInterface, nodeField} = nodeDefinitions(
+  globalId => {
+    const {id} = fromGlobalId(globalId)
+    return new Collection('article').get({id})
+  },
+  obj => {
+    return obj.articles ? ArchiveType : ArticleType
+  }
+)
 
 const ArticleType = new GraphQLObjectType({
   name: 'Article',
   description: 'article model',
-  fields: {
-    id: {type: GraphQLString},
-    title: {type: GraphQLString},
-    content: {type: GraphQLString},
-  }
-})
-
-const ArticlesType = new GraphQLObjectType({
-  name: 'Articles',
-  description: 'an array of articles',
   fields: () => ({
-    data: {type: new GraphQLList(ArticleType)}
-  })
-})
-
-const ArticleInputType = new GraphQLInputObjectType({
-  name: 'ArticleInput',
-  description: 'a new article or a edited article',
-  fields: {
+    id: globalIdField(),
     title: {type: GraphQLString},
     content: {type: GraphQLString},
-  }
+  }),
+  interfaces: [nodeInterface]
 })
 
-const query = {
-  type: ArticleType,
-  args: {
-    id: {type: new GraphQLNonNull(GraphQLString)}
-  },
-  resolve: (root, {id}) =>
-    new Collection('articles').get({id})
-}
+const {
+  connectionType: articleConnection
+} = connectionDefinitions({nodeType: ArticleType})
 
-const queryAll = {
-  type: ArticlesType,
-  args: {
-    page: {type: GraphQLInt},
-    per: {type: GraphQLInt},
-  },
-  resolve: (root, {page, per}) =>
-    new Collection('articles').getAll({page, per}).then(result => ({data: result}))
-}
+const ArchiveType = new GraphQLObjectType({
+  name: 'Archive',
+  description: 'article collection',
+  fields: {
+    articles: {
+      type: articleConnection,
+      args: connectionArgs,
+      resolve: (articles, args) => {
+        return connectionFromArray(articles, args)
+      }
+    }
+  }
+})
 
 const AddArticle = mutationWithClientMutationId({
   name: 'AddArticle',
@@ -103,8 +105,13 @@ const RemoveArticle = mutationWithClientMutationId({
 
 module.exports = {
   query: {
-    query,
-    queryAll
+    archive: {
+      type: ArchiveType,
+      resolve: () => {
+        return new Collection('articles').getAll()
+      }
+    },
+    node: nodeField
   },
   mutation: {
     addArticle: AddArticle,
