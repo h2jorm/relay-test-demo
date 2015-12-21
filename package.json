@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --watch",
-    "start": "supervisor -i node_modules,build -- --use_strict --harmony_destructuring index",
+    "start": "supervisor -i node_modules,build -- --use_strict --harmony_destructuring --harmony_default_parameters index",
     "test": "_mocha --harmony_destructuring --use_strict test",
-    "update-schema": "node --use_strict --harmony_destructuring ./scripts/updateSchema"
+    "update-schema": "node --use_strict --harmony_destructuring --harmony_default_parameters ./scripts/updateSchema"
   },
   "repository": {
     "type": "git",

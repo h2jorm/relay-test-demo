@@ -1,4 +1,5 @@
 const {
+  GraphQLInt,
   GraphQLString,
   GraphQLBoolean,
   GraphQLObjectType,
@@ -47,8 +48,12 @@ const query = {
 
 const queryAll = {
   type: ArticlesType,
-  resolve: root =>
-    new Collection('articles').getAll().then(result => ({data: result}))
+  args: {
+    page: {type: GraphQLInt},
+    per: {type: GraphQLInt},
+  },
+  resolve: (root, {page, per}) =>
+    new Collection('articles').getAll({page, per}).then(result => ({data: result}))
 }
 
 const AddArticle = mutationWithClientMutationId({

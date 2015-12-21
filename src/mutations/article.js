@@ -29,7 +29,7 @@ export class AddArticleMutation extends Relay.Mutation {
   getConfigs() {
     return [{
       type: 'FIELDS_CHANGE',
-      fieldIDs: {article: _.pluck(this.props.articles.data, 'id')}
+      fieldIDs: {article: '123456789'}
     }]
   }
 }
