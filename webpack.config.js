@@ -5,7 +5,9 @@ module.exports = {
   entry: {
     vendor: [
       'react',
-      'react-dom'
+      'react-dom',
+      'react-router',
+      'react-relay'
     ],
     app: './src/index.js'
   },
@@ -22,6 +24,10 @@ module.exports = {
         query: {
           presets: ['react', 'es2015', 'stage-0']
         }
+      },
+      {
+        test: /\.less$/,
+        loader: 'style!css!less',
       }
     ]
   },
