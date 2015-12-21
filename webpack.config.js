@@ -7,7 +7,8 @@ module.exports = {
       'react',
       'react-dom',
       'react-router',
-      'react-relay'
+      'react-relay',
+      'lodash'
     ],
     app: './src/index.js'
   },
@@ -37,7 +38,8 @@ module.exports = {
       name: 'vendor',
       minChunks: Infinity,
       filename: 'vendor.js'
-    })
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin()
   ]
 }
 

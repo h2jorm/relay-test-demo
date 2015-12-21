@@ -1,6 +1,7 @@
 import React from 'react'
 import Relay from 'react-relay'
-import {Link} from 'react-router'
+import {AddArticleMutation} from '../mutations/article'
+import style from './list.less'
 
 class Article extends React.Component {
   render() {
@@ -22,24 +23,52 @@ Article = Relay.createContainer(Article, {
 class ArticleList extends React.Component {
   render() {
     return (
-      <div>
-        <h1>List page</h1>
-        <Link to="/editor">Editor page</Link>
+      <div className="page-list">
+        <h1>Article List</h1>
         <ul>
-          {this.props.articleList.articles.map(
+          {this.props.articles.data.map(
             article => <Article article={article} key={article.id} />
           )}
         </ul>
+        <hr />
+        <div>
+          <h2>Editor</h2>
+          <form onSubmit={::this.handleSubmit}>
+            <div>
+              <input type="text"
+                placeholder="title"
+                ref="title"
+              />
+            </div>
+            <div>
+              <textarea placeholder="content"
+                ref="content">
+              </textarea>
+            </div>
+            <button type="submit">create</button>
+          </form>
+        </div>
       </div>
     )
+  }
+  handleSubmit(event) {
+    event.preventDefault()
+    const {title, content} = this.refs
+    Relay.Store.update(
+      new AddArticleMutation({
+        title: title.value,
+        content: content.value
+      })
+    )
+    title.value = content.value = ''
   }
 }
 
 ArticleList = Relay.createContainer(ArticleList, {
   fragments: {
-    articleList: () => Relay.QL`
-      fragment on ArticleList {
-        articles {${Article.getFragment('article')}}
+    articles: () => Relay.QL`
+      fragment on Articles {
+        data {${Article.getFragment('article')}}
       }
     `
   }
@@ -48,9 +77,9 @@ ArticleList = Relay.createContainer(ArticleList, {
 class ArticleListRoute extends Relay.Route {
   static routeName = 'Home'
   static queries = {
-    articleList: Component => Relay.QL`
+    articles: Component => Relay.QL`
       query {
-        queryAll {${Component.getFragment('articleList')}}
+        queryAll {${Component.getFragment('articles')}}
       }
     `
   }

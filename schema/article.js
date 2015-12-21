@@ -19,11 +19,11 @@ const ArticleType = new GraphQLObjectType({
   }
 })
 
-const ArticleListType = new GraphQLObjectType({
-  name: 'ArticleList',
+const ArticlesType = new GraphQLObjectType({
+  name: 'Articles',
   description: 'an array of articles',
   fields: () => ({
-    articles: {type: new GraphQLList(ArticleType)}
+    data: {type: new GraphQLList(ArticleType)}
   })
 })
 
@@ -46,13 +46,9 @@ const query = {
 }
 
 const queryAll = {
-  type: ArticleListType,
+  type: ArticlesType,
   resolve: root =>
-    new Collection('articles').getAll().then(result => {
-      return {
-        articles: result
-      }
-    })
+    new Collection('articles').getAll().then(result => ({data: result}))
 }
 
 const add = {
@@ -75,6 +71,9 @@ const AddArticle = mutationWithClientMutationId({
   },
   mutateAndGetPayload: ({title, content}) => {
     return new Collection('articles').add({title, content})
+    .then(result => {
+      return {article: result}
+    })
   }
 })
 
