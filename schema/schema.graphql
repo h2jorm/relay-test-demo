@@ -1,0 +1,78 @@
+input AddArticleInput {
+  title: String
+  content: String
+  clientMutationId: String!
+}
+
+type AddArticlePayload {
+  newArticle: Article
+  archive: Archive
+  clientMutationId: String!
+}
+
+type Archive implements Node {
+  id: ID!
+  articles(after: String, first: Int, before: String, last: Int): ArticleConnection
+}
+
+type Article implements Node {
+  id: ID!
+  title: String
+  content: String
+}
+
+type ArticleConnection {
+  pageInfo: PageInfo!
+  edges: [ArticleEdge]
+}
+
+type ArticleEdge {
+  node: Article
+  cursor: String!
+}
+
+type Mutation {
+  addArticle(input: AddArticleInput!): AddArticlePayload
+  updateArticle(input: UpdateArticleInput!): UpdateArticlePayload
+  removeArticle(input: RemoveArticleInput!): RemoveArticlePayload
+}
+
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  archive: Archive
+  node(id: ID!): Node
+}
+
+input RemoveArticleInput {
+  id: String
+  clientMutationId: String!
+}
+
+type RemoveArticlePayload {
+  removedArticle: Article
+  archive: Archive
+  clientMutationId: String!
+}
+
+input UpdateArticleInput {
+  id: String
+  title: String
+  content: String
+  clientMutationId: String!
+}
+
+type UpdateArticlePayload {
+  updatedArticle: Article
+  archive: Archive
+  clientMutationId: String!
+}
