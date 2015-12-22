@@ -1,5 +1,6 @@
 import React from 'react'
 import Relay from 'react-relay'
+import {Link} from 'react-router'
 import AddArticleMutation from '../mutations/AddArticleMutation'
 import RemoveArticleMutation from '../mutations/RemoveArticleMutation'
 import style from './list.less'
@@ -12,9 +13,10 @@ class Article extends React.Component {
   }
   render() {
     const {id, title, content} = this.props.article
+    const link = `/article/${id}`
     return (
       <li>
-        {title}-{content}
+        <Link to={link}>{title}-{content}</Link>
         <button onClick={::this.remove}>remove</button>
       </li>
     )
