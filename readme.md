@@ -2,9 +2,9 @@
 
 ## Run
 ```bash
+npm install -g pm2
 git clone git@git.coding.net:leeching/graphql-demo.git
 cd graphql-demo
-npm install -g pm2
 # development
 pm2 start app_dev.json
 pm2 logs graphql-demo-dev
@@ -17,32 +17,33 @@ See in [schema.json](schema/schema.graphql)
 
 ## Query and Mutation
 ```graphql
+fragment archive on Archive {
+  id
+  articles {
+    edges {
+      node {id,title,content}
+    }
+  }  
+}
+```
+```graphql
 query {
   archive {
-    id
-    articles {
-      edges {
-        node {id,title,content}
-      }
-    }
+    ...archive
   }
 }
 ```
 
 ```graphql
 mutation ($input:AddArticleInput!){
-  addArticle(input:$input){
+  addArticle(input:$input) {
     clientMutationId
     newArticle{
-      id,content,title
+      cursor,
+      node {id,content,title}
     }
     archive {
-      id
-      articles {
-      	edges {
-          node {id,title,content}
-        }
-      }
+      ...archive
     }
   }
 }
@@ -50,37 +51,25 @@ mutation ($input:AddArticleInput!){
 
 ```graphql
 mutation ($input:UpdateArticleInput!){
-  updateArticle(input:$input){
+  updateArticle(input:$input) {
     clientMutationId
-    updatedArticle{
+    updatedArticle {
       id,content,title
     }
     archive {
-      id
-      articles {
-      	edges {
-          node {id,title,content}
-        }
-      }
+      ...archive
     }
   }
 }
 ```
 
 ```graphql
-mutation ($input:RemoveArticleInput!){
-  removeArticle(input:$input){
+mutation ($input:RemoveArticleInput!) {
+  removeArticle(input:$input) {
     clientMutationId
-    removedArticle{
-      id,content,title
-    }
+    removedArticleId
     archive {
-      id
-      articles {
-      	edges {
-          node {id,title,content}
-        }
-      }
+      ...archive
     }
   }
 }
