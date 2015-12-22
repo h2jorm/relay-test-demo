@@ -1,4 +1,5 @@
 const {
+  GraphQLID,
   GraphQLInt,
   GraphQLString,
   GraphQLBoolean,
@@ -135,12 +136,12 @@ const UpdateArticle = mutationWithClientMutationId({
 const RemoveArticle = mutationWithClientMutationId({
   name: 'RemoveArticle',
   inputFields: {
-    id: {type: GraphQLString}
+    id: {type: new GraphQLNonNull(GraphQLID)}
   },
   outputFields: {
-    removedArticle: {
-      type: ArticleType,
-      resolve: payload => payload.removedArticle
+    removedArticleId: {
+      type: new GraphQLNonNull(GraphQLID),
+      resolve: payload => payload.removedArticleId
     },
     archive: {
       type: ArchiveType,
@@ -149,7 +150,7 @@ const RemoveArticle = mutationWithClientMutationId({
   },
   mutateAndGetPayload: ({id}) => {
     return new Collection('articles').remove({id: fromGlobalId(id).id})
-    .then(removedArticle => ({removedArticle}))
+    .then(removedArticle => ({removedArticleId: id}))
   }
 })
 

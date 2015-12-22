@@ -1,13 +1,22 @@
 import React from 'react'
 import Relay from 'react-relay'
-import {AddArticleMutation} from '../mutations/AddArticleMutation'
+import AddArticleMutation from '../mutations/AddArticleMutation'
+import RemoveArticleMutation from '../mutations/RemoveArticleMutation'
 import style from './list.less'
 
 class Article extends React.Component {
+  remove(event) {
+    event.preventDefault()
+    const {id} = this.props.article
+    this.props.remove(id)
+  }
   render() {
     const {id, title, content} = this.props.article
     return (
-      <li>{title}-{content}</li>
+      <li>
+        {title}-{content}
+        <button onClick={::this.remove}>remove</button>
+      </li>
     )
   }
 }
@@ -33,13 +42,25 @@ class Archive extends React.Component {
     )
     title.value = content.value = ''
   }
+  removeArticle(id) {
+    Relay.Store.update(
+      new RemoveArticleMutation({
+        id,
+        archive: this.props.archive
+      })
+    )
+  }
   render() {
     return (
       <div className="page-list">
         <h1>Article List</h1>
         <ul>
-          {this.props.archive.articles.edges.map(
-            edge => <Article article={edge.node} key={edge.node.id} />
+          {this.props.archive.articles.edges.map(edge =>
+            <Article
+              article={edge.node}
+              key={edge.node.id}
+              remove={::this.removeArticle}
+            />
           )}
         </ul>
         <hr />

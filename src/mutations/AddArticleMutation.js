@@ -1,6 +1,6 @@
 import Relay from 'react-relay'
 
-export class AddArticleMutation extends Relay.Mutation {
+export default class AddArticleMutation extends Relay.Mutation {
   getMutation() {
     return Relay.QL`
       mutation {addArticle}
@@ -13,10 +13,7 @@ export class AddArticleMutation extends Relay.Mutation {
   getFatQuery() {
     return Relay.QL`
       fragment on AddArticlePayload {
-        archive {
-          id
-          articles
-        },
+        archive {id},
         newArticle {cursor,node}
       }
     `

@@ -54,12 +54,12 @@ type Query {
 }
 
 input RemoveArticleInput {
-  id: String
+  id: ID!
   clientMutationId: String!
 }
 
 type RemoveArticlePayload {
-  removedArticle: Article
+  removedArticleId: ID!
   archive: Archive
   clientMutationId: String!
 }
