@@ -7,7 +7,7 @@
     "NODE_ENV": "development"
   },
   "watch": true,
-  "ignore_watch": ["node_modules", "log", "build", "src"],
+  "ignore_watch": ["node_modules", "log", "build", "src", ".git"],
   "node_args": [
     "--use_strict",
     "--harmony_destructuring",

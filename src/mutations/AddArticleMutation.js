@@ -1,13 +1,6 @@
 import Relay from 'react-relay'
 
 export class AddArticleMutation extends Relay.Mutation {
-  // static fragments = {
-  //   articles: () => Relay.QL`
-  //     fragment on Article {
-  //       data {id, title, content}
-  //     }
-  //   `
-  // }
   getMutation() {
     return Relay.QL`
       mutation {addArticle}
@@ -21,11 +14,10 @@ export class AddArticleMutation extends Relay.Mutation {
     return Relay.QL`
       fragment on AddArticlePayload {
         archive {
+          id
           articles
         },
-        newArticle {
-          id, content, title
-        }
+        newArticle {cursor,node}
       }
     `
   }

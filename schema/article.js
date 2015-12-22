@@ -15,9 +15,11 @@ const {
   nodeDefinitions,
   fromGlobalId,
   globalIdField,
+  offsetToCursor,
   mutationWithClientMutationId
 } = require('graphql-relay')
 const Collection = require('../lib/collection')
+const _ = require('lodash')
 
 const {nodeInterface, nodeField} = nodeDefinitions(
   globalId => {
@@ -46,7 +48,8 @@ const ArticleType = new GraphQLObjectType({
 })
 
 const {
-  connectionType: articleConnection
+  connectionType: articleConnection,
+  edgeType: articleEdgeType
 } = connectionDefinitions({nodeType: ArticleType})
 
 const ArchiveType = new GraphQLObjectType({
@@ -73,8 +76,16 @@ const AddArticle = mutationWithClientMutationId({
   },
   outputFields: {
     newArticle: {
-      type: ArticleType,
-      resolve: payload => payload.newArticle
+      type: articleEdgeType,
+      resolve: ({newArticle, cursor}) => {
+        return new Collection('articles').getAll()
+        .then(articles => {
+          return {
+            cursor,
+            node: newArticle
+          }
+        })
+      }
     },
     archive: {
       type: ArchiveType,
@@ -85,7 +96,16 @@ const AddArticle = mutationWithClientMutationId({
   },
   mutateAndGetPayload: ({title, content}) => {
     return new Collection('articles').add({title, content})
-    .then(newArticle => ({newArticle}))
+    .then(newArticle => {
+      return new Collection('articles').getAll().then(articles => {
+        return {
+          newArticle,
+          cursor: offsetToCursor(
+            _.findIndex(articles, article => article.id === newArticle.id)
+          )
+        }
+      })
+    })
   }
 })
 

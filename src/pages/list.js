@@ -1,6 +1,6 @@
 import React from 'react'
 import Relay from 'react-relay'
-import {AddArticleMutation} from '../mutations/article'
+import {AddArticleMutation} from '../mutations/AddArticleMutation'
 import style from './list.less'
 
 class Article extends React.Component {
@@ -21,13 +21,25 @@ Article = Relay.createContainer(Article, {
 })
 
 class Archive extends React.Component {
+  handleSubmit(event) {
+    event.preventDefault()
+    const {title, content} = this.refs
+    Relay.Store.update(
+      new AddArticleMutation({
+        title: title.value,
+        content: content.value,
+        archive: this.props.archive
+      })
+    )
+    title.value = content.value = ''
+  }
   render() {
     return (
       <div className="page-list">
         <h1>Article List</h1>
         <ul>
           {this.props.archive.articles.edges.map(
-            edge => <Article article={edge.node} key={edge.cursor} />
+            edge => <Article article={edge.node} key={edge.node.id} />
           )}
         </ul>
         <hr />
@@ -51,27 +63,19 @@ class Archive extends React.Component {
       </div>
     )
   }
-  handleSubmit(event) {
-    event.preventDefault()
-    const {title, content} = this.refs
-    Relay.Store.update(
-      new AddArticleMutation({
-        title: title.value,
-        content: content.value,
-        archive: this.props.archive
-      })
-    )
-    title.value = content.value = ''
-  }
 }
 
 Archive = Relay.createContainer(Archive, {
   fragments: {
     archive: () => Relay.QL`
       fragment on Archive {
+        id
         articles(first: 10) {
           edges {
-            node {${Article.getFragment('article')}}
+            node {
+              id
+              ${Article.getFragment('article')}
+            }
           }
         }
       }

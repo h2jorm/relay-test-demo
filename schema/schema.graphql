@@ -5,7 +5,7 @@ input AddArticleInput {
 }
 
 type AddArticlePayload {
-  newArticle: Article
+  newArticle: ArticleEdge
   archive: Archive
   clientMutationId: String!
 }
