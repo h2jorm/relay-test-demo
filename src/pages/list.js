@@ -57,7 +57,8 @@ class Archive extends React.Component {
     Relay.Store.update(
       new AddArticleMutation({
         title: title.value,
-        content: content.value
+        content: content.value,
+        archive: this.props.archive
       })
     )
     title.value = content.value = ''

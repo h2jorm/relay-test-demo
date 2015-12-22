@@ -20,16 +20,25 @@ export class AddArticleMutation extends Relay.Mutation {
   getFatQuery() {
     return Relay.QL`
       fragment on AddArticlePayload {
-        article {
-          id, title, content
+        archive {
+          articles
+        },
+        newArticle {
+          id, content, title
         }
       }
     `
   }
   getConfigs() {
     return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {article: '123456789'}
+      type: 'RANGE_ADD',
+      parentName: 'archive',
+      parentID: this.props.archive.id,
+      connectionName: 'articles',
+      edgeName: 'newArticle',
+      rangeBehaviors: {
+        '': 'append'
+      }
     }]
   }
 }

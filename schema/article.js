@@ -21,8 +21,13 @@ const Collection = require('../lib/collection')
 
 const {nodeInterface, nodeField} = nodeDefinitions(
   globalId => {
-    const {id} = fromGlobalId(globalId)
-    return new Collection('article').get({id})
+    const {id, type} = fromGlobalId(globalId)
+    if (type === 'Article')
+      return new Collection('articles').get({id})
+    else if (type === 'Archive')
+      return new Collection('articles').getAll()
+    else
+      return null
   },
   obj => {
     return obj.articles ? ArchiveType : ArticleType
@@ -47,7 +52,8 @@ const {
 const ArchiveType = new GraphQLObjectType({
   name: 'Archive',
   description: 'article collection',
-  fields: {
+  fields: () => ({
+    id: globalIdField(),
     articles: {
       type: articleConnection,
       args: connectionArgs,
@@ -55,7 +61,8 @@ const ArchiveType = new GraphQLObjectType({
         return connectionFromArray(articles, args)
       }
     }
-  }
+  }),
+  interfaces: [nodeInterface]
 })
 
 const AddArticle = mutationWithClientMutationId({
@@ -65,13 +72,20 @@ const AddArticle = mutationWithClientMutationId({
     content: {type: GraphQLString},
   },
   outputFields: {
-    article: {type: ArticleType}
+    newArticle: {
+      type: ArticleType,
+      resolve: payload => payload.newArticle
+    },
+    archive: {
+      type: ArchiveType,
+      resolve: () => {
+        return new Collection('articles').getAll()
+      }
+    }
   },
   mutateAndGetPayload: ({title, content}) => {
     return new Collection('articles').add({title, content})
-    .then(result => {
-      return {article: result}
-    })
+    .then(newArticle => ({newArticle}))
   }
 })
 
@@ -83,10 +97,18 @@ const UpdateArticle = mutationWithClientMutationId({
     content: {type: GraphQLString},
   },
   outputFields: {
-    article: {type: ArticleType}
+    updatedArticle: {
+      type: ArticleType,
+      resolve: payload => payload.updatedArticle
+    },
+    archive: {
+      type: ArchiveType,
+      resolve: () => new Collection('articles').getAll()
+    }
   },
-  mutationWithClientMutationId: ({id, title, content}) => {
-    return new Collection('articles').update({id}, {title, content})
+  mutateAndGetPayload: ({id, title, content}) => {
+    return new Collection('articles').update({id: fromGlobalId(id).id}, {title, content})
+    .then(updatedArticle => ({updatedArticle}))
   }
 })
 
@@ -96,10 +118,18 @@ const RemoveArticle = mutationWithClientMutationId({
     id: {type: GraphQLString}
   },
   outputFields: {
-    article: {type: ArticleType}
+    removedArticle: {
+      type: ArticleType,
+      resolve: payload => payload.removedArticle
+    },
+    archive: {
+      type: ArchiveType,
+      resolve: () => new Collection('articles').getAll()
+    }
   },
   mutateAndGetPayload: ({id}) => {
-    return new Collection('articles').remove({id})
+    return new Collection('articles').remove({id: fromGlobalId(id).id})
+    .then(removedArticle => ({removedArticle}))
   }
 })
 
