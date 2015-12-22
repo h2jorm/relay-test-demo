@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --watch",
-    "start": "supervisor -i node_modules,build -- --use_strict --harmony_destructuring --harmony_default_parameters index",
     "test": "_mocha --harmony_destructuring --use_strict test",
     "update-schema": "node --use_strict --harmony_destructuring --harmony_default_parameters ./scripts/updateSchema"
   },
@@ -45,7 +44,6 @@
     "react-relay": "^0.6.0",
     "react-router": "^1.0.2",
     "style-loader": "^0.13.0",
-    "supervisor": "^0.9.1",
     "webpack": "^1.12.9"
   }
 }
