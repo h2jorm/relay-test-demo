@@ -50,6 +50,7 @@ type PageInfo {
 
 type Query {
   archive: Archive
+  article(id: ID!): Article
   node(id: ID!): Node
 }
 

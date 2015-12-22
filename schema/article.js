@@ -69,6 +69,19 @@ const ArchiveType = new GraphQLObjectType({
   interfaces: [nodeInterface]
 })
 
+const ArticleQuery = new GraphQLObjectType({
+  name: 'ArticleQuery',
+  fields: () => ({
+    type: ArticleType,
+    args: {
+      id: new GraphQLNonNull(GraphQLID)
+    },
+    resolve: (root, {id}) => {
+      return new Collection('articles').get({id: fromGlobalId(id).id})
+    }
+  })
+})
+
 const AddArticle = mutationWithClientMutationId({
   name: 'AddArticle',
   inputFields: {
@@ -160,6 +173,15 @@ module.exports = {
       type: ArchiveType,
       resolve: () => {
         return new Collection('articles').getAll()
+      }
+    },
+    article: {
+      type: ArticleType,
+      args: {
+        id: {type: new GraphQLNonNull(GraphQLID)}
+      },
+      resolve: (root, {id}) => {
+        return new Collection('articles').get({id: fromGlobalId(id).id})
       }
     },
     node: nodeField

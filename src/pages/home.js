@@ -3,7 +3,7 @@ import Relay from 'react-relay'
 import {Link} from 'react-router'
 import AddArticleMutation from '../mutations/AddArticleMutation'
 import RemoveArticleMutation from '../mutations/RemoveArticleMutation'
-import style from './list.less'
+import Editor from '../components/editor'
 
 class Article extends React.Component {
   remove(event) {
@@ -13,7 +13,7 @@ class Article extends React.Component {
   }
   render() {
     const {id, title, content} = this.props.article
-    const link = `/article/${id}`
+    const link = `/article/update/${id}`
     return (
       <li>
         <Link to={link}>{title}-{content}</Link>
@@ -31,18 +31,14 @@ Article = Relay.createContainer(Article, {
   }
 })
 
-class Archive extends React.Component {
-  handleSubmit(event) {
-    event.preventDefault()
-    const {title, content} = this.refs
+class Home extends React.Component {
+  handleSubmit({title, content}) {
     Relay.Store.update(
       new AddArticleMutation({
-        title: title.value,
-        content: content.value,
+        title, content,
         archive: this.props.archive
       })
     )
-    title.value = content.value = ''
   }
   removeArticle(id) {
     Relay.Store.update(
@@ -66,29 +62,13 @@ class Archive extends React.Component {
           )}
         </ul>
         <hr />
-        <div>
-          <h2>Editor</h2>
-          <form onSubmit={::this.handleSubmit}>
-            <div>
-              <input type="text"
-                placeholder="title"
-                ref="title"
-              />
-            </div>
-            <div>
-              <textarea placeholder="content"
-                ref="content">
-              </textarea>
-            </div>
-            <button type="submit">create</button>
-          </form>
-        </div>
+        <Editor submit={::this.handleSubmit} />
       </div>
     )
   }
 }
 
-Archive = Relay.createContainer(Archive, {
+Home = Relay.createContainer(Home, {
   fragments: {
     archive: () => Relay.QL`
       fragment on Archive {
@@ -111,17 +91,17 @@ class ArchiveRoute extends Relay.Route {
   static queries = {
     archive: Component => Relay.QL`
       query {
-        archive {${Archive.getFragment('archive')}}
+        archive {${Component.getFragment('archive')}}
       }
     `
   }
 }
 
-export default class Page extends React.Component {
+export default class HomePage extends React.Component {
   render() {
     return (
       <Relay.RootContainer
-        Component={Archive}
+        Component={Home}
         route={new ArchiveRoute()}
       />
     )
