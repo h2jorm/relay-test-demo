@@ -10,6 +10,10 @@ const articleSchema = require('./schema/index')
 const PORT = 4000
 const app = koa()
 
+if (process.env.NODE_ENV === 'development') {
+  const logger = require('koa-logger')
+  app.use(logger())
+}
 app.use(route.get('/', function *() {
   yield send(this, 'public/index.html')
 }))
