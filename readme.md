@@ -35,7 +35,7 @@ query {
 ```
 
 ```graphql
-mutation ($input:AddArticleInput!){
+mutation ($input:AddArticleInput!) {
   addArticle(input:$input) {
     clientMutationId
     newArticle{
@@ -50,7 +50,7 @@ mutation ($input:AddArticleInput!){
 ```
 
 ```graphql
-mutation ($input:UpdateArticleInput!){
+mutation ($input:UpdateArticleInput!) {
   updateArticle(input:$input) {
     clientMutationId
     updatedArticle {

@@ -14,7 +14,7 @@ class UpdateEditor extends React.Component {
       window.alert('update failed')
     }
     Relay.Store.update(new UpdateArticleMutation({
-      id, title,content
+      id, title, content
     }), {onSuccess, onFail})
   }
   render() {

@@ -10,14 +10,17 @@ export default class UpdateArticleMutation extends Relay.Mutation {
     const {id, title, content} = this.props
     return {id, title, content}
   }
-  getConfigs() {
-    return []
-  }
   getFatQuery() {
     return Relay.QL`
       fragment on UpdateArticlePayload {
         updatedArticle {id,title,content}
       }
     `
+  }
+  getConfigs() {
+    return [{
+      type: 'FIELDS_CHANGE',
+      fieldIDs: {updatedArticle: this.props.id}
+    }]
   }
 }
