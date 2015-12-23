@@ -8,7 +8,8 @@ module.exports = {
       'react-dom',
       'react-router',
       'react-relay',
-      'lodash'
+      'lodash',
+      'history',
     ],
     app: './src/index.js'
   },
