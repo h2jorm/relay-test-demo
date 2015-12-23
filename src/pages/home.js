@@ -33,6 +33,27 @@ Article = Relay.createContainer(Article, {
   }
 })
 
+class ArticleList extends React.Component {
+  render() {
+    const {articles, id} = this.props.archive
+    return (
+      articles.edges.length
+        ? (
+          <ul>
+            {articles.edges.map(edge =>
+              <Article
+                article={edge.node}
+                key={edge.node.id}
+                archiveId={id}
+              />
+            )}
+          </ul>
+        )
+        : <p><em>No articles</em></p>
+    )
+  }
+}
+
 class Home extends React.Component {
   handleSubmit({title, content}) {
     Relay.Store.update(
@@ -44,17 +65,9 @@ class Home extends React.Component {
   }
   render() {
     return (
-      <div className="page-list">
+      <div>
         <h1>Article List</h1>
-        <ul>
-          {this.props.archive.articles.edges.map(edge =>
-            <Article
-              article={edge.node}
-              key={edge.node.id}
-              archiveId={this.props.archive.id}
-            />
-          )}
-        </ul>
+        <ArticleList archive={this.props.archive} />
         <hr />
         <Editor submit={::this.handleSubmit} />
       </div>
