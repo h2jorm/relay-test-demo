@@ -43,7 +43,7 @@ export default class Editor extends React.Component {
               defaultValue={this.props.content}>
             </textarea>
           </div>
-          <button type="submit">create</button>
+          <button type="submit">submit</button>
         </form>
       </div>
     )
