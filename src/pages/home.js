@@ -8,8 +8,10 @@ import Editor from '../components/editor'
 class Article extends React.Component {
   remove(event) {
     event.preventDefault()
-    const {id} = this.props.article
-    this.props.remove(id)
+    const {id, archiveId} = this.props.article
+    Relay.Store.update(
+      new RemoveArticleMutation({id, archiveId})
+    )
   }
   render() {
     const {id, title, content} = this.props.article
@@ -40,14 +42,6 @@ class Home extends React.Component {
       })
     )
   }
-  removeArticle(id) {
-    Relay.Store.update(
-      new RemoveArticleMutation({
-        id,
-        archive: this.props.archive
-      })
-    )
-  }
   render() {
     return (
       <div className="page-list">
@@ -57,7 +51,7 @@ class Home extends React.Component {
             <Article
               article={edge.node}
               key={edge.node.id}
-              remove={::this.removeArticle}
+              archiveId={this.props.archive.id}
             />
           )}
         </ul>

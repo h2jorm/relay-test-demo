@@ -21,7 +21,7 @@ export default class RemoveArticleMutation extends Relay.Mutation {
     return [{
       type: 'NODE_DELETE',
       parentName: 'archive',
-      parentID: this.props.archive.id,
+      // parentID: this.props.archiveId,
       // connectionName: 'articles',
       deletedIDFieldName: 'removedArticleId'
     }]
