@@ -1,4 +1,5 @@
 const babel = require('babel-core')
+const babelRelayPlugin = require('./babelRelayPlugin')
 
 module.exports = {
   process: function (src, filename) {
@@ -9,6 +10,7 @@ module.exports = {
       return babel.transform(src, {
         filename: filename,
         presets: ['react', 'es2015', 'stage-0'],
+        plugins: [babelRelayPlugin],
         retainLines: true
       }).code
     return src

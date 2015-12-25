@@ -14,14 +14,20 @@ if (process.env.NODE_ENV === 'development') {
   const logger = require('koa-logger')
   app.use(logger())
 }
-app.use(route.get('/', function *() {
-  yield send(this, 'public/index.html')
-}))
 app.use(mount('/assets', staticDir(path.join(__dirname, 'build'))))
 app.use(mount('/graphql', graphqlHTTP({
   schema: articleSchema,
   pretty: true,
   graphiql: true
 })))
+app.use(route.get('/', function *() {
+  yield send(this, 'public/index.html')
+}))
+app.use(route.get('/hello', function *() {
+  yield send(this, 'public/index.html')
+}))
+app.use(route.get('/article/update/:id', function *() {
+  yield send(this, 'public/index.html')
+}))
 
 app.listen(PORT, () => console.log(`koa is listening on ${PORT}`))

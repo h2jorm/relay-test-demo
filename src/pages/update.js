@@ -4,6 +4,8 @@ import {Link} from 'react-router'
 import Editor from '../components/editor'
 import UpdateArticleMutation from '../mutations/UpdateArticleMutation'
 import history from '../history'
+import {setArticleToUpdate} from '../store/actions'
+import store from '../store'
 
 class UpdateEditor extends React.Component {
   updateArticle({id, title, content}) {
@@ -18,6 +20,8 @@ class UpdateEditor extends React.Component {
     }), {onSuccess, onFail})
   }
   render() {
+    console.log(this.props.article)
+    store.dispatch(setArticleToUpdate(this.props.article))
     const {id, title, content} = this.props.article
     return (
       <div>
@@ -33,7 +37,7 @@ class UpdateEditor extends React.Component {
   }
 }
 
-UpdateEditor = Relay.createContainer(UpdateEditor, {
+let UpdateEditorContainer = Relay.createContainer(UpdateEditor, {
   fragments: {
     article: () => Relay.QL`
       fragment on Article {
@@ -52,7 +56,7 @@ class UpdateEditorRoute extends Relay.Route {
     article: Component => Relay.QL`
       query {
         article(id: $articleId) {
-          ${UpdateEditor.getFragment('article')}
+          ${UpdateEditorContainer.getFragment('article')}
         }
       }
     `
@@ -64,7 +68,7 @@ export default class UpdateEditorPage extends React.Component {
     const route = new UpdateEditorRoute({articleId: this.props.routeParams.id})
      return (
       <Relay.RootContainer
-        Component={UpdateEditor}
+        Component={UpdateEditorContainer}
         route={route}
       />
     )

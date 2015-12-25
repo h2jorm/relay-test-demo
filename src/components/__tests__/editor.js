@@ -1,11 +1,10 @@
 jest.dontMock('../editor')
 
 import React from 'react'
-import ReactDOM from 'react-dom'
 import {
+  isCompositeComponent,
   renderIntoDocument,
   findRenderedDOMComponentWithTag,
-  createRenderer,
   Simulate
 } from 'react-addons-test-utils'
 const Editor = require('../editor').default
