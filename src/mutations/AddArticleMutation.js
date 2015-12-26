@@ -1,6 +1,6 @@
 import Relay from 'react-relay'
 
-export default class AddArticleMutation extends Relay.Mutation {
+module.exports = class AddArticleMutation extends Relay.Mutation {
   getMutation() {
     return Relay.QL`
       mutation {addArticle}

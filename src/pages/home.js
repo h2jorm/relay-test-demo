@@ -5,7 +5,7 @@ import AddArticleMutation from '../mutations/AddArticleMutation'
 import RemoveArticleMutation from '../mutations/RemoveArticleMutation'
 import Editor from '../components/editor'
 
-class Article extends React.Component {
+export class Article extends React.Component {
   remove(event) {
     event.preventDefault()
     const {id, archiveId} = this.props.article
@@ -33,7 +33,7 @@ Article = Relay.createContainer(Article, {
   }
 })
 
-class ArticleList extends React.Component {
+export class ArticleList extends React.Component {
   render() {
     const {articles, id} = this.props.archive
     return (
@@ -54,7 +54,7 @@ class ArticleList extends React.Component {
   }
 }
 
-class Home extends React.Component {
+export class Home extends React.Component {
   handleSubmit({title, content}) {
     Relay.Store.update(
       new AddArticleMutation({
@@ -75,7 +75,7 @@ class Home extends React.Component {
   }
 }
 
-Home = Relay.createContainer(Home, {
+export let HomeContainer = Relay.createContainer(Home, {
   fragments: {
     archive: () => Relay.QL`
       fragment on Archive {
@@ -104,11 +104,11 @@ class ArchiveRoute extends Relay.Route {
   }
 }
 
-export default class HomePage extends React.Component {
+export class HomePage extends React.Component {
   render() {
     return (
       <Relay.RootContainer
-        Component={Home}
+        Component={HomeContainer}
         route={new ArchiveRoute()}
       />
     )
