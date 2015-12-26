@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react'
 
 require('./editor.less')
 
-export default class Editor extends React.Component {
+module.exports = class Editor extends React.Component {
   static propTypes = {
     id: PropTypes.string,
     title: PropTypes.string,

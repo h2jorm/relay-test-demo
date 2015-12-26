@@ -7,7 +7,7 @@ import {
   findRenderedDOMComponentWithTag,
   Simulate
 } from 'react-addons-test-utils'
-const Editor = require('../editor').default
+const Editor = require('../editor')
 
 describe('Editor', () => {
 

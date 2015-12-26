@@ -7,7 +7,7 @@ import history from '../history'
 import {setArticleToUpdate} from '../store/actions'
 import store from '../store'
 
-class UpdateEditor extends React.Component {
+export class UpdateEditor extends React.Component {
   updateArticle({id, title, content}) {
     const onSuccess = function () {
       history.replaceState(null, '/')
@@ -20,8 +20,6 @@ class UpdateEditor extends React.Component {
     }), {onSuccess, onFail})
   }
   render() {
-    console.log(this.props.article)
-    store.dispatch(setArticleToUpdate(this.props.article))
     const {id, title, content} = this.props.article
     return (
       <div>
@@ -37,7 +35,7 @@ class UpdateEditor extends React.Component {
   }
 }
 
-let UpdateEditorContainer = Relay.createContainer(UpdateEditor, {
+export let UpdateEditorContainer = Relay.createContainer(UpdateEditor, {
   fragments: {
     article: () => Relay.QL`
       fragment on Article {
@@ -47,7 +45,7 @@ let UpdateEditorContainer = Relay.createContainer(UpdateEditor, {
   }
 })
 
-class UpdateEditorRoute extends Relay.Route {
+export class UpdateEditorRoute extends Relay.Route {
   static routeName = 'UpdateArticle'
   static paramDefinition = {
     articleId: {require: true}
@@ -63,7 +61,7 @@ class UpdateEditorRoute extends Relay.Route {
   }
 }
 
-export default class UpdateEditorPage extends React.Component {
+export class UpdateEditorPage extends React.Component {
   render() {
     const route = new UpdateEditorRoute({articleId: this.props.routeParams.id})
      return (

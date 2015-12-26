@@ -2,57 +2,53 @@ jest.dontMock('../update')
 jest.dontMock('../../components/editor')
 
 import React from 'react'
-import Relay from 'react-relay'
 import ReactDOM from 'react-dom'
 import {
+  mockComponent,
   renderIntoDocument,
   findRenderedDOMComponentWithTag,
   Simulate
 } from 'react-addons-test-utils'
-const UpdateEditorPage = require('../update').default
-import store from '../../store'
+import Relay from 'react-relay'
+import {
+  renderContainerIntoDocument
+} from 'relay-test-utils'
+const {
+  UpdateEditor,
+  UpdateEditorContainer,
+} = require('../update')
 
 const article = {
-  "data": {
-    "article": {
-      "id": "QXJ0aWNsZTo1NjdhNjBkMmI0YmUzNDFmNzVhY2ZiOTE=",
-      "title": "hello",
-      "content": "world"
-    }
-  }
+  "id": "QXJ0aWNsZTo1NjdhNjBkMmI0YmUzNDFmNzVhY2ZiOTE=",
+  "title": "hello",
+  "content": "world"
 }
 
-// const done = jest.genMockFn().Impl()
-
-const myNetworkLayer = {
-  sendMutation(mutationRequest) {
-    // return mutationRequest.resolve({response: updateArticlePayload.data})
-  },
-  sendQueries(queryRequests) {
-    return queryRequests.map(
-      queryRequest => {
-        return queryRequest.resolve({response: article.data})
-      }
+describe('UpdateEditorContainer', () => {
+  it('should render UpdateEditor component correctly', () => {
+    const {id, title, content} = article
+    const container = renderContainerIntoDocument(
+      <UpdateEditorContainer article={article} />
     )
-  },
-  supports() {
-    return true
-  }
-}
+    expect(findRenderedDOMComponentWithTag(container, 'input').value).toBe(title)
+    expect(findRenderedDOMComponentWithTag(container, 'textarea').textContent).toBe(content)
+  })
+})
 
-Relay.injectNetworkLayer(myNetworkLayer)
-
-describe('UpdateEditorPage', () => {
-
-  it('should pass', () => {
-    // const updateEditor = renderIntoDocument(
-    //   <UpdateEditorPage routeParams={{id: 'QXJ0aWNsZTo1NjdhNjBkMmI0YmUzNDFmNzVhY2ZiOTE='}} />
-    // )
-    const updateEditor = ReactDOM.render(
-      <UpdateEditorPage routeParams={{id: 'QXJ0aWNsZTo1NjdhNjBkMmI0YmUzNDFmNzVhY2ZiOTE='}} />,
-      document.createElement('div')
+describe('UpdateEditor', () => {
+  let updateEditor, updateEditorNode
+  beforeEach(() => {
+    updateEditor = renderIntoDocument(
+      <UpdateEditor article={article} />
     )
-    console.log('store', store.getState())
-    console.log(findRenderedDOMComponentWithTag(updateEditor, 'button'))
+    updateEditorNode = ReactDOM.findDOMNode(updateEditor)
+  })
+  it('should has a link to home page', () => {
+    expect(updateEditorNode.querySelector('a').textContent).toBe('Back to index')
+  })
+  it('should launch a mutation request', () => {
+    updateEditor = new UpdateEditor()
+    updateEditor.updateArticle(article)
+    expect(Relay.Store.update).toBeCalled()
   })
 })
