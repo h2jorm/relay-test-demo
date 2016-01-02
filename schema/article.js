@@ -92,20 +92,15 @@ const AddArticle = mutationWithClientMutationId({
     newArticle: {
       type: articleEdgeType,
       resolve: ({newArticle, cursor}) => {
-        return new Collection('articles').getAll()
-        .then(articles => {
-          return {
-            cursor,
-            node: newArticle
-          }
-        })
+        return {
+          cursor,
+          node: newArticle
+        }
       }
     },
     archive: {
       type: ArchiveType,
-      resolve: () => {
-        return new Collection('articles').getAll()
-      }
+      resolve: ({articles}) => articles
     }
   },
   mutateAndGetPayload: ({title, content}) => {
@@ -114,6 +109,7 @@ const AddArticle = mutationWithClientMutationId({
       return new Collection('articles').getAll().then(articles => {
         return {
           newArticle,
+          articles,
           cursor: offsetToCursor(
             _.findIndex(articles, article => article.id === newArticle.id)
           )
